@@ -2,31 +2,64 @@ import React from 'react';
 import { Card, CardImg, CardText, CardBody, CardTitle } from 'reactstrap';
 
 class DishDetail extends React.Component {
+
+    renderDish(dish){
+        return(
+            <Card>
+                <CardImg top src={dish.image} alt={dish.name} />
+                <CardBody>
+                    <CardTitle>{dish.name}</CardTitle>
+                    <CardText>{dish.description}</CardText>
+                </CardBody>
+            </Card>
+        )
+    }
+
+    renderComments(comments) {
+        if (comments == null || comments.length === 0) {
+          return (
+            <div></div>
+          );
+        }
+    
+        const renderedComments = comments.map((comment) => {
+            return (
+              <li>
+                <p>{comment.comment}</p>
+                <p>-- {comment.author}, {this.convertDateToCommentDateFormat(comment.date)}</p>
+              </li>
+            );
+          });
+      
+        return (
+            <div>
+                <h4>Comments</h4>
+                <ul className="list-unstyled">
+                    { renderedComments }
+                </ul>
+            </div>
+        );
+    }
+   
+    convertDateToCommentDateFormat(timestamp) {
+        const date = new Date(timestamp);
+        return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+    }
     
     render() {
-        
+
         const selectedDish = this.props.dish;
 
         if(selectedDish != null) {
             return(
-                <div className="row">
-                    <div className="col-12 col-md-5 m-1">
-                        <Card>
-                            <CardImg top src={selectedDish.image} alt={selectedDish.name} />
-                            <CardBody>
-                                <CardTitle>{selectedDish.name}</CardTitle>
-                                <CardText>{selectedDish.description}</CardText>
-                            </CardBody>
-                        </Card>
-                    </div>
-                    <div className="col-12 col-md-5 m-1">
-                        <h4>Comments</h4>
-                        {this.props.dish.comments.map(item => (
-                            <div key={item.id}>
-                            <p className="mb-3">{item.comment}</p>
-                            <p className="mb-3">-- {item.author}, {item.date}</p>
-                            </div>
-                        ))}
+                <div className="container">
+                    <div className="row">
+                        <div className="col-12 col-md-5 m-1">
+                            {this.renderDish(selectedDish)}
+                        </div>
+                        <div className="col-12 col-md-5 m-1">
+                            { this.renderComments(this.props.dish.comments) }
+                        </div>
                     </div>
                 </div>
             );
